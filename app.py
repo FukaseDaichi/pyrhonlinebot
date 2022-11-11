@@ -11,6 +11,8 @@ from linebot.models import (
 )
 import os
 
+from src.services.handle_message_service import *
+
 #Flaskを準備
 app = Flask(__name__)
 
@@ -27,7 +29,6 @@ line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(LINE_CHANNEL_SECRET)
 
 @app.route("/callback", methods=['POST'])
-
 def callback():
     # HTTPリクエストヘッダからX-Line-Signatureを取り出す
     signature = request.headers['X-Line-Signature']
@@ -49,9 +50,17 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     # テキストでの返信を行う
+    reply = handle_message_service.generate_reply_message(event.message.text)
+    
+    # line_bot_api.reply_message(
+    #     event.reply_token,
+    #     TextSendMessage(text=event.message.text )
+    # )
+
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=event.message.text )
+        TextSendMessage(text=reply )
     )
+
 if __name__ == "__main__":
     app.run()
