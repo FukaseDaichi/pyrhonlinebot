@@ -47,7 +47,7 @@ def callback():
 
 @app.route("/test", methods=['GET'])
 def test():
-    messages = handle_message_service.generate_reply_message("こんにちは")
+    messages = handle_message_service.generate_reply_message("testfdsafa")
     return  {'messages': [message.as_json_dict() for message in [messages]]}
 
 # MessageEvent
