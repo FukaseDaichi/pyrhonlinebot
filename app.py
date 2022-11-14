@@ -16,7 +16,6 @@ from src.services.handle_message_service import *
 #Flaskを準備
 app = Flask(__name__)
 
-
 #環境変数からLINE Access Tokenを設定
 LINE_CHANNEL_ACCESS_TOKEN = os.environ["LINE_CHANNEL_ACCESS_TOKEN"]
 #環境変数からLINE Channel Secretを設定
@@ -51,7 +50,7 @@ def callback():
 def handle_message(event):
     # テキストでの返信を行う
     reply = handle_message_service.generate_reply_message(event.message.text)
-    
+
     # line_bot_api.reply_message(
     #     event.reply_token,
     #     TextSendMessage(text=event.message.text )

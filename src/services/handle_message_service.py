@@ -1,11 +1,11 @@
 import json
 
 class handle_message_service :
+	mydict = json.load(open(file='./src/dict/mydict.json', mode='r', encoding="utf-8"))
+
+	@staticmethod
 	def generate_reply_message(receivedMessage) :
-		json_file = open(file='./src/dict/mydict.json', mode='r', encoding="utf-8")
-		mydict = json.load(json_file)
-		
-		for key in mydict :
+		for key in handle_message_service.mydict :
 			if (receivedMessage == key) :
-				return mydict[key]
-		return mydict['except']
+				return handle_message_service.mydict[key]
+		return handle_message_service.mydict['except']
