@@ -45,20 +45,20 @@ def callback():
         abort(400)
     return 'OK'
 
+@app.route("/test", methods=['GET'])
+def test():
+    messages = handle_message_service.generate_reply_message("こんにちは")
+    return  {'messages': [message.as_json_dict() for message in [messages]]}
+
 # MessageEvent
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     # テキストでの返信を行う
-    reply = handle_message_service.generate_reply_message(event.message.text)
-
-    # line_bot_api.reply_message(
-    #     event.reply_token,
-    #     TextSendMessage(text=event.message.text )
-    # )
+    messages = handle_message_service.generate_reply_message(event.message.text)
 
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=reply )
+        messages
     )
 
 if __name__ == "__main__":
