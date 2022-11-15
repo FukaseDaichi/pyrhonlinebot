@@ -3,15 +3,25 @@ from linebot.models import (
     TextSendMessage
 )
 import re
+import importlib
 
-class handle_message_service :
-	__mydict = json.load(open(file='./const/dict/mydict.json', mode='r', encoding="utf-8"))
+class HandleMessageService :
+	__classList = json.load(open(file='./const/classList.json', mode='r', encoding="utf-8"))
+	__messagedict = json.load(open(file='./const/messagedict.json', mode='r', encoding="utf-8"))
 
 	@staticmethod
 	def generate_reply_message(receivedMessage) :
-		for key in handle_message_service.__mydict :
+		# クラスリスト一致検索
+
+		for key in HandleMessageService.__classList :
 			if (re.compile(key).fullmatch(receivedMessage)) :
-				return TextSendMessage(text=handle_message_service.__mydict[key])
+				message_module = importlib.import_module(HandleMessageService.__classList[key])
+				return message_module.Message.create_message(receivedMessage)
+
+		# メッセージ辞書一致
+		for key in HandleMessageService.__messagedict :
+			if (re.compile(key).fullmatch(receivedMessage)) :
+				return TextSendMessage(text=HandleMessageService.__messagedict[key])
 
 		# なかった場合
-		return TextSendMessage(text=handle_message_service.__mydict["except"])
+		return TextSendMessage(text=HandleMessageService.__messagedict["except"])

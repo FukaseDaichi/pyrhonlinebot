@@ -45,21 +45,28 @@ def callback():
         abort(400)
     return 'OK'
 
-@app.route("/test", methods=['GET'])
-def test():
-    messages = handle_message_service.generate_reply_message("testfdsafa")
+@app.route("/test//<text>", methods=['GET'])
+def test(text):
+    messages = HandleMessageService.generate_reply_message(text)
     return  {'messages': [message.as_json_dict() for message in [messages]]}
 
 # MessageEvent
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     # テキストでの返信を行う
-    messages = handle_message_service.generate_reply_message(event.message.text)
+    try:
+        messages = HandleMessageService.generate_reply_message(event.message.text)
 
-    line_bot_api.reply_message(
-        event.reply_token,
-        messages
-    )
+        line_bot_api.reply_message(
+            event.reply_token,
+            messages
+        )
+    except Exception as e:
+        print(e)
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text="例外が発生しました。")
+        )
 
 if __name__ == "__main__":
     app.run()

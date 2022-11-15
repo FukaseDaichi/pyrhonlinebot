@@ -1,0 +1,4 @@
+{
+  "help": "src.messages.messages_help",
+  "test": "src.messages.messages_test"
+}
