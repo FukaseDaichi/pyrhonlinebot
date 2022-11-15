@@ -7,7 +7,7 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage,StickerMessage
+    MessageEvent, TextMessage, TextSendMessage,StickerMessage,ImageMessage
 )
 import os
 
@@ -44,7 +44,9 @@ def callback():
 # 動作確認用
 @app.route("/test//<text>", methods=['GET'])
 def test(text):
-    messages = HandleMessageService.generate_reply_message(text)
+    # messages = HandleMessageService.generate_reply_message(text)
+    messages = StickerMessage(package_id=446,sticker_id=1989)
+    
     return  {'messages': [message.as_json_dict() for message in [messages]]}
 
 # MessageEvent
@@ -64,18 +66,29 @@ def handle_message(event):
 
 # スタンプハンドラー
 @handler.add(MessageEvent, message=StickerMessage)
-def handle_message(event):
+def handle_sticker(event):
     # テキストでの返信を行う
     try:
         messages = StickerMessage(package_id=446,sticker_id=1989)
-
         line_bot_api.reply_message(
             event.reply_token,
             messages
         )
     except Exception as e:
         error_handler(event.reply_token,e)
-    
+
+# 画像ハンドラー
+@handler.add(MessageEvent, message=ImageMessage)
+def handle_image(event):
+    # テキストでの返信を行う
+    try:
+        messages = StickerMessage(package_id=446,sticker_id=1989)
+        line_bot_api.reply_message(
+            event.reply_token,
+            messages
+        )
+    except Exception as e:
+        error_handler(event.reply_token,e)
 
 # エラーハンドラー
 def error_handler(reply_token,e):
