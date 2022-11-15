@@ -1,7 +1,4 @@
 
-from pathlib import Path
-
-
 class HandleImageService :
 
 	@staticmethod

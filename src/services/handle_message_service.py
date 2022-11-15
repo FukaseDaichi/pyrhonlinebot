@@ -6,6 +6,7 @@ import re
 import importlib
 
 class HandleMessageService :
+	
 	# クラスリスト
 	__classList = json.load(open(file='./const/classList.json', mode='r', encoding="utf-8"))
 
