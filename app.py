@@ -7,14 +7,14 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage
+    MessageEvent, TextMessage, TextSendMessage,StickerMessage
 )
 import os
 
 from src.services.handle_message_service import *
 
 #Flaskを準備
-app = Flask(__name__)
+app = Flask(__name__,static_folder='resources')
 
 #環境変数からLINE Access Tokenを設定
 LINE_CHANNEL_ACCESS_TOKEN = os.environ["LINE_CHANNEL_ACCESS_TOKEN"]
@@ -35,16 +35,13 @@ def callback():
     body = request.get_data(as_text=True)
 
     app.logger.info("Request body: " + body)
-    # webhookのbodyを解析する
-    # この結果はadd関数で受け取る
-    # なお、Signatureが一致していない時はInvalidSignatureError例外が発生する
-
     try:
         handler.handle(body, signature)
     except InvalidSignatureError:
         abort(400)
     return 'OK'
 
+# 動作確認用
 @app.route("/test//<text>", methods=['GET'])
 def test(text):
     messages = HandleMessageService.generate_reply_message(text)
@@ -62,11 +59,31 @@ def handle_message(event):
             messages
         )
     except Exception as e:
-        print(e)
+        error_handler(event.reply_token,e)
+
+
+# スタンプハンドラー
+@handler.add(MessageEvent, message=StickerMessage)
+def handle_message(event):
+    # テキストでの返信を行う
+    try:
+        messages = StickerMessage(package_id=446,sticker_id=1989)
+
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text="例外が発生しました。")
+            messages
         )
+    except Exception as e:
+        error_handler(event.reply_token,e)
+    
+
+# エラーハンドラー
+def error_handler(reply_token,e):
+    print(e)
+    line_bot_api.reply_message(
+        reply_token,
+        TextSendMessage(text="例外が発生しました。")
+    )
 
 if __name__ == "__main__":
     app.run()
