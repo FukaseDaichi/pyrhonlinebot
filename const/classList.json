@@ -1,4 +1,5 @@
 {
   "help": "src.messages.messages_help",
-  "test": "src.messages.messages_test"
+  "test": "src.messages.messages_test",
+  "ランダム謎取得": "src.messages.messages_get_randomquiz"
 }
