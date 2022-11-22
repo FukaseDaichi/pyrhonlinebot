@@ -52,7 +52,7 @@ class TwitterApiService :
             try:
                 # 画像取得
                 tweet_url = tweet.extended_entities["media"][0]["url"];
-                tweet_img_url = tweet.extended_entities["media"][0]["media_url"];
+                tweet_img_url = tweet.extended_entities["media"][0]["media_url_https"];
 
                 #ツイート時刻とユーザのアカウント作成時刻を日本時刻にする
                 tweet_time = TwitterApiService.change_time_JST(tweet.created_at)
