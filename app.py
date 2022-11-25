@@ -11,9 +11,9 @@ from linebot.models import (
 )
 import os
 
-from src.services.twitter_api_service import TwitterApiService
-
+import src.services.schedule
 from src.services.handle_message_service import *
+
 
 #Flaskを準備
 app = Flask(__name__,static_folder='resources')
@@ -29,9 +29,6 @@ line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
 #WebhookHandlerのインスタンスを生成
 handler = WebhookHandler(LINE_CHANNEL_SECRET)
 
-#テスト的な初回実行
-print("◆初回実行")
-TwitterApiService.get_tweets()
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -51,11 +48,7 @@ def callback():
 @app.route("/test//<text>", methods=['GET'])
 def test(text):
     messages = HandleMessageService.generate_reply_message(text)
-    # messages = StickerMessage(package_id=446,sticker_id=1989)
-    
-    # TwitterApiService.get_tweets()
-    # TwitterApiService.output_csv()
-    
+        
     return  {'messages': [message.as_json_dict() for message in [messages]]}
 
 # MessageEvent

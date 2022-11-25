@@ -130,3 +130,5 @@ dmypy.json
 
 # 以下UOC
 .vscode/
+const.tw_data.csv
+create_teet.py

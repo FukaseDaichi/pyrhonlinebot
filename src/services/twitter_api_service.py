@@ -13,20 +13,20 @@ class TwitterApiService :
     ACCESS_TOKEN = os.environ["ACCESS_TOKEN"]
     ACCESS_TOKEN_SECRET = os.environ["ACCESS_TOKEN_SECRET"]
 
-    #Twitterの認証
-    __auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
-    __auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
-    api = tweepy.API(__auth)
-    #　”wait_on_rate_limit = True”　利用制限にひっかかた時に必要時間待機する
-    api=tweepy.API(__auth,wait_on_rate_limit=True)
-
     # 検索条件の設定
     # リツイート除外
-    SEARCH_WORD = '#謎解き min_faves:1 -filter:retweets'
+    SEARCH_WORD = "#解けたらRT min_faves:1 -is:retweet"
     #何件のツイートを取得するか
     ITEM_NUMBER = 300
 
-    tw_data = []
+    #Twitterの認証
+    __auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
+    __auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
+    __api = tweepy.API(__auth)
+    #　”wait_on_rate_limit = True”　利用制限にひっかかた時に必要時間待機する
+    __api=tweepy.API(__auth,wait_on_rate_limit=True)
+
+    __tw_data = []
 
     @staticmethod
     def change_time_JST(u_time):
@@ -42,7 +42,8 @@ class TwitterApiService :
     #検索条件を元にツイートを抽出
     @staticmethod
     def get_tweets():
-        tweets = tweepy.Cursor(TwitterApiService.api.search_tweets,q=TwitterApiService.SEARCH_WORD, tweet_mode='extended',result_type="mixed",lang='ja',include_entities=True).items(TwitterApiService.ITEM_NUMBER)
+        print("◆定期実行：ツイート取得")
+        tweets = tweepy.Cursor(TwitterApiService.__api.search_tweets,q=TwitterApiService.SEARCH_WORD, tweet_mode='extended',result_type="mixed",lang='ja',include_entities=True).items(TwitterApiService.ITEM_NUMBER)
 
         for tweet in tweets:
 
@@ -58,7 +59,7 @@ class TwitterApiService :
                 tweet_time = TwitterApiService.change_time_JST(tweet.created_at)
 
                 #tweet_dataの配列に取得したい情報を入れていく    
-                TwitterApiService.tw_data.append({
+                TwitterApiService.__tw_data.append({
                     "url":tweet_url,
                     "img_url":tweet_img_url,
                     "time":tweet_time,
@@ -71,7 +72,7 @@ class TwitterApiService :
 
     @staticmethod
     def get_one_tweet():
-        return random.choice(TwitterApiService.tw_data)
+        return random.choice(TwitterApiService.__tw_data)
 
     @staticmethod
     def output_csv():
@@ -86,11 +87,12 @@ class TwitterApiService :
             ]
 
         #tw_dataのリストをpandasのDataFrameに変換
-        df = pd.DataFrame(TwitterApiService.tw_data,columns=labels)
+        datas = [list(tw.values()) for tw in TwitterApiService.__tw_data]
+        df = pd.DataFrame(datas,columns=labels)
 
         #CSVファイルに出力する
         #CSVファイルの名前を決める
-        file_name='./const.tw_data.csv'
+        file_name="./const.tw_data.csv"
 
         #CSVファイルを出力する
-        df.to_csv(file_name,encoding='utf-8-sig',index=False)
+        df.to_csv(file_name,encoding="utf-8-sig",index=False)
