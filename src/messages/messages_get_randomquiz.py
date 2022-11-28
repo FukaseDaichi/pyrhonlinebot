@@ -29,8 +29,7 @@ class Message :
 		if event.source.type == "group":
 			actions.append(PostbackAction(
                 label='再取得',
-                display_text='ランダム謎取得',
-                data='id=0'
+                data='randomquiz'
             ),)
 
 		# 補足

@@ -16,7 +16,7 @@ class HandlePostbackService :
 		print(event.postback.data)
 		# クラスリスト一致検索
 		for key in HandlePostbackService.__postback_classList :
-			if (re.compile(key).fullmatch(event.postback.data["id"])) :
+			if (re.compile(key).fullmatch(event.postback.data)) :
 				message_module = importlib.import_module(HandlePostbackService.__postback_classList[key])
 				return message_module.Message.create_message(event)
 

@@ -106,7 +106,7 @@ def handle_postback(event):
 def defolt_handler(event):
     # テキストでの返信を行う
     try:
-        messages = DefoltMessage(event)
+        messages = DefoltMessage.create_message(event)
         line_bot_api.reply_message(
             event.reply_token,
             messages
