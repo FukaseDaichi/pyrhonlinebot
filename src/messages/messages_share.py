@@ -7,7 +7,7 @@ class Message :
 	@staticmethod
 	def create_message(__event) :
 		imagemap_message = ImagemapSendMessage(
-   			base_url='https://pythonlinebot.onrender.com/resources/share.png',
+   			base_url='https://pythonlinebot.onrender.com/resources/imagemap',
     		alt_text='シェアツイート',
     		base_size=BaseSize(height=460, width=460),
     		actions=[
