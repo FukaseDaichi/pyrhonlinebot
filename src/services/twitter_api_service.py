@@ -6,6 +6,8 @@ from datetime import datetime,timezone
 import pytz
 import pandas as pd
 
+from src.commonclass.dict_not_notetion import DictDotNotation
+
 class TwitterApiService :
     #Twitter情報。
     CONSUMER_KEY = os.environ["CONSUMER_KEY"]
@@ -17,7 +19,7 @@ class TwitterApiService :
     # リツイート除外
     SEARCH_WORD = "#解けたらRT min_faves:1 -is:retweet"
     #何件のツイートを取得するか
-    ITEM_NUMBER = 300
+    ITEM_NUMBER = 500
 
     #Twitterの認証
     __auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
@@ -43,13 +45,15 @@ class TwitterApiService :
     @staticmethod
     def get_tweets():
         print("◆定期実行：ツイート取得")
+
         tweets = tweepy.Cursor(TwitterApiService.__api.search_tweets,q=TwitterApiService.SEARCH_WORD, tweet_mode='extended',result_type="mixed",lang='ja',include_entities=True).items(TwitterApiService.ITEM_NUMBER)
 
-        for tweet in tweets:
+        # 初期化
+        TwitterApiService.__tw_data = []
 
+        for tweet in tweets:
             # 以下デバッグ用
             # print(tweet._json)
-
             try:
                 # 画像取得
                 tweet_url = tweet.extended_entities["media"][0]["url"];
@@ -59,13 +63,13 @@ class TwitterApiService :
                 tweet_time = TwitterApiService.change_time_JST(tweet.created_at)
 
                 #tweet_dataの配列に取得したい情報を入れていく    
-                TwitterApiService.__tw_data.append({
+                TwitterApiService.__tw_data.append(DictDotNotation({
                     "url":tweet_url,
                     "img_url":tweet_img_url,
                     "time":tweet_time,
                     "user_id":tweet.user.screen_name,
                     "user_name":tweet.user.name,
-                })
+                }))
                                 
             except Exception as e:
                 continue

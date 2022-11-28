@@ -4,5 +4,5 @@ from linebot.models import (
 
 class Message :
 	@staticmethod
-	def create_message(message) :		
-		return TextSendMessage(text=message)
+	def create_message(event) :		
+		return TextSendMessage(text=event.message.text)

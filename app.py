@@ -1,4 +1,4 @@
-from flask import Flask, request, abort
+from flask import Flask, request, abort,render_template
 
 from linebot import (
     LineBotApi, WebhookHandler
@@ -7,12 +7,15 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage,StickerMessage,ImageMessage
+    MessageEvent, TextMessage, TextSendMessage,StickerMessage,ImageMessage,JoinEvent,PostbackEvent
 )
 import os
+from src.services.handle_postback_service import HandlePostbackService
+from src.messages.messages_get_randomquiz import Message as DefoltMessage
+from src.commonclass.dict_not_notetion import DictDotNotation
+from src.services.handle_message_service import *
 
 import src.services.schedule
-from src.services.handle_message_service import *
 
 
 #Flaskを準備
@@ -29,6 +32,10 @@ line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
 #WebhookHandlerのインスタンスを生成
 handler = WebhookHandler(LINE_CHANNEL_SECRET)
 
+
+@app.route("/")
+def index():
+    return render_template("index.html")
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -47,7 +54,8 @@ def callback():
 # 動作確認用
 @app.route("/test//<text>", methods=['GET'])
 def test(text):
-    messages = HandleMessageService.generate_reply_message(text)
+    event = DictDotNotation({"message":DictDotNotation({"text":text})})
+    messages = HandleMessageService.generate_reply_message(event)
         
     return  {'messages': [message.as_json_dict() for message in [messages]]}
 
@@ -56,7 +64,7 @@ def test(text):
 def handle_message(event):
     # テキストでの返信を行う
     try:
-        messages = HandleMessageService.generate_reply_message(event.message.text)
+        messages = HandleMessageService.generate_reply_message(event)
 
         line_bot_api.reply_message(
             event.reply_token,
@@ -64,14 +72,29 @@ def handle_message(event):
         )
     except Exception as e:
         error_handler(event.reply_token,e)
-
 
 # スタンプハンドラー
 @handler.add(MessageEvent, message=StickerMessage)
 def handle_sticker(event):
+    defolt_handler(event)
+
+# 画像ハンドラー
+@handler.add(MessageEvent, message=ImageMessage)
+def handle_image(event):
+    defolt_handler(event)
+
+# グループ参加
+@handler.add(JoinEvent)
+def handle_join(event):
+    defolt_handler(event)
+
+# PostBackEvent
+@handler.add(PostbackEvent)
+def handle_postback(event):
     # テキストでの返信を行う
     try:
-        messages = StickerMessage(package_id=446,sticker_id=1989)
+        messages = HandlePostbackService.generate_reply_message(event)
+
         line_bot_api.reply_message(
             event.reply_token,
             messages
@@ -79,12 +102,11 @@ def handle_sticker(event):
     except Exception as e:
         error_handler(event.reply_token,e)
 
-# 画像ハンドラー
-@handler.add(MessageEvent, message=ImageMessage)
-def handle_image(event):
+# デフォルトハンドラー
+def defolt_handler(event):
     # テキストでの返信を行う
     try:
-        messages = StickerMessage(package_id=446,sticker_id=1989)
+        messages = DefoltMessage(event)
         line_bot_api.reply_message(
             event.reply_token,
             messages
@@ -99,6 +121,7 @@ def error_handler(reply_token,e):
         reply_token,
         TextSendMessage(text="例外が発生しました。")
     )
+
 
 if __name__ == "__main__":
     app.run()
