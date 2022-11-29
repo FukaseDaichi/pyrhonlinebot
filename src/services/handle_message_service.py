@@ -3,6 +3,8 @@ from linebot.models import TextSendMessage
 import re
 import importlib
 
+from messages.messages_share import Message as ShareMessage
+
 
 class HandleMessageService:
 
@@ -32,4 +34,4 @@ class HandleMessageService:
                 return TextSendMessage(text=HandleMessageService.__messagedict[key])
 
         # なかった場合
-        return TextSendMessage(text=HandleMessageService.__messagedict["except"])
+        return ShareMessage.create_message(event)
