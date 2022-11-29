@@ -17,9 +17,9 @@ class TwitterApiService :
 
     # 検索条件の設定
     # リツイート除外
-    SEARCH_WORD = "#解けたらRT min_faves:1 -is:retweet"
+    SEARCH_WORD = "(#解けたらRT OR #kotae謎解き) -filter:retweets"
     #何件のツイートを取得するか
-    ITEM_NUMBER = 500
+    ITEM_NUMBER = 1000
 
     #Twitterの認証
     __auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
@@ -44,14 +44,14 @@ class TwitterApiService :
     #検索条件を元にツイートを抽出
     @staticmethod
     def get_tweets():
+        
         print("◆定期実行：ツイート取得")
-
-        tweets = tweepy.Cursor(TwitterApiService.__api.search_tweets,q=TwitterApiService.SEARCH_WORD, tweet_mode='extended',result_type="mixed",lang='ja',include_entities=True).items(TwitterApiService.ITEM_NUMBER)
-
         # 初期化
         TwitterApiService.__tw_data = []
+        count = 0
 
-        for tweet in tweets:
+        for tweet in tweepy.Cursor(TwitterApiService.__api.search_tweets,q=TwitterApiService.SEARCH_WORD, tweet_mode='extended',result_type="mixed",lang='ja',include_entities=True,count=200).items(TwitterApiService.ITEM_NUMBER):
+            count = count+1
             # 以下デバッグ用
             # print(tweet._json)
             try:
@@ -73,6 +73,8 @@ class TwitterApiService :
                                 
             except Exception as e:
                 continue
+        
+        print(f"{count}件検索")
 
     @staticmethod
     def get_one_tweet():

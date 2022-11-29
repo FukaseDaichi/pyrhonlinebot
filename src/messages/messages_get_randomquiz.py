@@ -36,7 +36,7 @@ class Message :
 		message_template = TemplateSendMessage(
 			alt_text="元ネタ情報",
 			template=ButtonsTemplate(
-				text=f"作者様 {tweet.user_name}様",
+				text=f"作者： {tweet.user_name}様",
 				actions=actions
 			)
     	)
