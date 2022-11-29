@@ -3,7 +3,7 @@ from linebot.models import TextSendMessage
 import re
 import importlib
 
-from messages.messages_share import Message as ShareMessage
+from src.messages.messages_share import Message as ShareMessage
 
 
 class HandleMessageService:
