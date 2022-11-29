@@ -21,7 +21,9 @@ class HandlePostbackService:
                 message_module = importlib.import_module(
                     HandlePostbackService.__postback_classList[key]
                 )
-                return message_module.Message.create_message(event)
+                return message_module.Message.create_message(
+                    event, HandlePostbackService.__postback_classList[key]
+                )
 
         # なかった場合
         return TextSendMessage(text="例外が発生しました。")

@@ -11,7 +11,7 @@ from src.services.twitter_api_service import TwitterApiService
 
 class Message:
     @staticmethod
-    def create_message(event):
+    def create_message(event, __obj=None):
         tweet = TwitterApiService.get_one_tweet()
 
         # 画像

@@ -4,6 +4,7 @@ import re
 import importlib
 
 from src.messages.messages_share import Message as ShareMessage
+from src.messages.messages_normal import Message as NormalMessage
 
 
 class HandleMessageService:
@@ -26,12 +27,16 @@ class HandleMessageService:
                 message_module = importlib.import_module(
                     HandleMessageService.__classList[key]
                 )
-                return message_module.Message.create_message(event)
+                return message_module.Message.create_message(
+                    event, HandleMessageService.__classList[key]
+                )
 
         # メッセージ辞書一致
         for key in HandleMessageService.__messagedict:
             if re.compile(key).fullmatch(event.message.text):
-                return TextSendMessage(text=HandleMessageService.__messagedict[key])
+                return NormalMessage.create_message(
+                    event, HandleMessageService.__messagedict[key]
+                )
 
         # なかった場合
         return ShareMessage.create_message(event)

@@ -60,6 +60,8 @@ def callback():
 def test(text):
     event = DictDotNotation({"message": DictDotNotation({"text": text})})
     messages = HandleMessageService.generate_reply_message(event)
+    if type(messages) == list:
+        return {"messages": [message.as_json_dict() for message in messages]}
 
     return {"messages": [message.as_json_dict() for message in [messages]]}
 
