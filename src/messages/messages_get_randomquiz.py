@@ -35,5 +35,4 @@ class Message:
             alt_text="元ネタ情報",
             template=ButtonsTemplate(text=f"作者： {tweet.user_name}様", actions=actions),
         )
-        print(message_template.as_json_dict())
         return [image_message, message_template]

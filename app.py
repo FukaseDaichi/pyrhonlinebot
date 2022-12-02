@@ -17,7 +17,7 @@ from src.messages.messages_get_randomquiz import Message as DefoltMessage
 from src.commonclass.dict_not_notetion import DictDotNotation
 from src.services.handle_message_service import *
 
-import src.services.schedule
+from src.services.schedule import *
 
 
 # Flaskを準備
@@ -38,6 +38,11 @@ handler = WebhookHandler(LINE_CHANNEL_SECRET)
 @app.route("/")
 def index():
     return render_template("index.html")
+
+
+@app.route("/share")
+def share():
+    return render_template("share.html")
 
 
 @app.route("/callback", methods=["POST"])

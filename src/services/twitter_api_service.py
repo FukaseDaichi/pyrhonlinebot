@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 import pytz
 import pandas as pd
 
+from src.commonclass.constants import Constants
 from src.commonclass.dict_not_notetion import DictDotNotation
 
 
@@ -15,12 +16,6 @@ class TwitterApiService:
     CONSUMER_SECRET = os.environ["CONSUMER_SECRET"]
     ACCESS_TOKEN = os.environ["ACCESS_TOKEN"]
     ACCESS_TOKEN_SECRET = os.environ["ACCESS_TOKEN_SECRET"]
-
-    # 検索条件の設定
-    # リツイート除外
-    SEARCH_WORD = "(#解けたらRT OR #kotae謎解き) -filter:retweets"
-    # 何件のツイートを取得するか
-    ITEM_NUMBER = 1000
 
     # Twitterの認証
     __auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
@@ -60,14 +55,15 @@ class TwitterApiService:
 
         for tweet in tweepy.Cursor(
             TwitterApiService.__api.search_tweets,
-            q=TwitterApiService.SEARCH_WORD,
+            q=Constants.SEARCH_WORD,
             tweet_mode="extended",
             result_type="mixed",
             lang="ja",
             include_entities=True,
             count=200,
-        ).items(TwitterApiService.ITEM_NUMBER):
+        ).items(Constants.ITEM_NUMBER):
             count = count + 1
+
             # 以下デバッグ用
             # print(tweet._json)
             try:

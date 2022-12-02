@@ -14,7 +14,6 @@ class HandlePostbackService:
     @staticmethod
     def generate_reply_message(event):
 
-        print(event.postback.data)
         # クラスリスト一致検索
         for key in HandlePostbackService.__postback_classList:
             if re.compile(key).fullmatch(event.postback.data):
