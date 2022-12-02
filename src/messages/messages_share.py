@@ -11,13 +11,6 @@ from src.commonclass.constants import Constants
 class Message:
     @staticmethod
     def create_message(__event, __obj=None):
-        share_url = Constants.DOMAIN_URL + "resources/img/share.png"
-
-        # 画像
-        image_message = ImageSendMessage(
-            preview_image_url=share_url,
-            original_content_url=share_url,
-        )
 
         buttons_template_message = TemplateSendMessage(
             alt_text="よろしければ画像を使用してシェアお願いします！",
@@ -30,4 +23,4 @@ class Message:
             ),
         )
 
-        return [image_message, buttons_template_message]
+        return buttons_template_message
