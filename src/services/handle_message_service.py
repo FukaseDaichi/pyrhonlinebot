@@ -2,7 +2,6 @@ import json
 import re
 import importlib
 
-from src.messages.messages_share import Message as ShareMessage
 from src.messages.messages_normal import Message as NormalMessage
 
 
@@ -31,4 +30,4 @@ class HandleMessageService:
                 )
 
         # なかった場合
-        return ShareMessage.create_message(event)
+        return NormalMessage.create_message(event, "デフォルトメッセージ")

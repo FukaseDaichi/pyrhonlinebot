@@ -10,10 +10,10 @@ from linebot.models import (
     ImageMessage,
     JoinEvent,
     PostbackEvent,
+    AudioMessage,
 )
 import os
 from src.services.handle_postback_service import HandlePostbackService
-from src.messages.messages_get_randomquiz import Message as DefoltMessage
 from src.commonclass.dict_not_notetion import DictDotNotation
 from src.services.handle_message_service import *
 
@@ -40,9 +40,9 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/share")
-def share():
-    return render_template("share.html")
+@app.route("//<path>")
+def share(path):
+    return render_template(path + ".html")
 
 
 @app.route("/callback", methods=["POST"])
@@ -117,10 +117,18 @@ def handle_postback(event):
 def defolt_handler(event):
     # テキストでの返信を行う
     try:
-        messages = DefoltMessage.create_message(event)
+
+        messages = HandleMessageService.generate_reply_message(event)
         line_bot_api.reply_message(event.reply_token, messages)
+
     except Exception as e:
         error_handler(event.reply_token, e)
+
+
+# 音声メッセージハンドラー
+@handler.add(MessageEvent, message=AudioMessage)
+def handle_voice(event):
+    defolt_handler(event)
 
 
 # エラーハンドラー

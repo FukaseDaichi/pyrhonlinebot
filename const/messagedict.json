@@ -1,8 +1,6 @@
 {
   "help": "src.messages.messages_help",
   "test": "src.messages.messages_test",
-  "シェア": "src.messages.messages_share",
-  "ランダム謎取得": "src.messages.messages_get_randomquiz",
   "こん.*": "あらこんにちは",
   "おはよう": ["おはようございます！コーヒーでもどうですか？", "どうですか？"],
   "どうも": [
